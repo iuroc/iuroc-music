@@ -4,7 +4,7 @@ export const sendRes = <T = any>(
     res: Response,
     success: boolean = true,
     message: string = '操作成功',
-    data: T | null = null,
+    data?: T,
 ) => {
     res.send({ success, message, data })
 }

@@ -9,9 +9,6 @@ import { join } from 'path'
 
 const router = Router()
 
-router.get('/', (_, res) => {
-    res.sendFile(join(__dirname, '..', '..', 'frontend', 'dist', 'index.html'))
-})
 router.use('/api/search', search)
 router.use('/api/music', music)
 router.use('/api/artist', artist)

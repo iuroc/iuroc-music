@@ -4,7 +4,7 @@ import { sendRes } from '../util'
 const router = Router()
 
 router.get('/searchTip', async (req, res) => {
-    const keyword = req.query.keyword as string
+    const keyword = <string>req.query.keyword || ''
     const words = await getSearchTip(keyword)
     sendRes(res, true, '获取成功', words)
 })
