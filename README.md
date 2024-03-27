@@ -1,12 +1,10 @@
-# vanjs-start
+# iuroc-music
 
-> 快速创建 Van.js 项目开发环境
+> 爱优音乐
 
-## 使用方式
+## 快速开始
 
 ```bash
-git clone https://github.com/iuroc/vanjs-start.git
-git remote rm origin
 npm install
 ```
 
