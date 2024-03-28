@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import search from './route/search'
-import music from './route/music'
+import audio from './route/audio'
 import artist from './route/artist'
 import album from './route/album'
 import playlist from './route/playlist'
@@ -10,7 +10,7 @@ import { join } from 'path'
 const router = Router()
 
 router.use('/api/search', search)
-router.use('/api/music', music)
+router.use('/api/audio', audio)
 router.use('/api/artist', artist)
 router.use('/api/album', album)
 router.use('/api/playlist', playlist)

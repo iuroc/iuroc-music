@@ -1,5 +1,5 @@
 import van from 'vanjs-core'
-import { getRandItem } from '../../backend/src/util'
+import { getRandItem } from '../../backend/src/util/public'
 import { activeRoute, routeTo } from 'vanjs-router'
 
 const { button, div, input } = van.tags
@@ -29,7 +29,7 @@ export const Header = () => {
 
     return div({ class: 'navbar navbar-expand-md bg-primary-subtle border-bottom border-2 border-primary-subtle sticky-top' },
         div({ class: 'container' },
-            div({ class: 'navbar-brand user-select-none', role: 'button', onclick: () => routeTo('home') }, '爱优音乐'),
+            div({ class: 'navbar-brand user-select-none', role: 'button', onclick: () => routeTo('home') }, '爱有音乐'),
             div({ class: 'collapse navbar-collapse' },
                 div({ class: 'navbar-nav me-auto' },
                     NavItem('home', '推荐'),

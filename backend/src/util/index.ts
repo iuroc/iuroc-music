@@ -1,64 +1,57 @@
-import { Response } from 'express'
+import { NextFunction, Request, RequestHandler, Response } from 'express'
+import { createHash } from 'crypto'
 
 export const sendRes = <T = any>(
     res: Response,
     success: boolean = true,
     message: string = '操作成功',
-    data?: T,
+    data: T | null = null,
 ) => {
     res.send({ success, message, data })
 }
 
-export const getKuwoCookie = async () => {
-    const res = await fetch('https://kuwo.cn/favicon.ico')
-    const kvStr = res.headers.get('Set-Cookie')
-    if (!kvStr) throw new Error('在响应头中没有找到 Set-Cookie')
-    const matchResult = kvStr.match(/([^;=]{20,})=([^;=]*)/)
-    if (!matchResult) throw new Error('没有找到符合要求的 Cookie')
-    const [_, key, value] = matchResult
-    return { key, value }
+/**
+ * 获取 `dfid`，该值有一年有效期
+ * @throws `Error`
+ */
+export const getDfid = async () => {
+    const query = {
+        appid: '1014',
+        platid: '4',
+        clientver: '0',
+        clienttime: Date.now().toString(),
+        signature: '',
+        mid: getMD5Hex(Date.now().toString()),
+        userid: '0',
+        uuid: getMD5Hex(Date.now().toString()),
+    }
+    query.signature = getMD5Hex(`1014${Object.values(query).sort().join('')}1014`)
+    const res = await fetch('https://userservice.kugou.com/risk/v1/r_register_dev?' + new URLSearchParams(query).toString(), {
+        method: 'post',
+        body: btoa(`{"uuid":""}`)
+    })
+    const data = await res.json() as { data: { dfid: string } }
+    const { data: { dfid } } = data
+    if (!dfid) throw new Error('请求速度过快，获取 dfid 失败')
+    return dfid
 }
 
-export const makeSecret = (key: string, value: string) => {
-    if (!key) throw new Error('Secret 加密失败')
-    let str = ''
-    for (let i = 0; i < key.length; i++)
-        str += key.charCodeAt(i).toString()
-    const num1 = Math.floor(str.length / 5)
-    const num2 = parseInt(
-        str.charAt(num1) +
-        str.charAt(2 * num1) +
-        str.charAt(3 * num1) +
-        str.charAt(4 * num1) +
-        str.charAt(5 * num1)
-    )
-    const num3 = Math.ceil(key.length / 2)
-    const num4 = Math.pow(2, 31) - 1
-    if (num2 < 2) throw new Error('Secret 加密失败')
-    let num5 = Math.round(1e9 * Math.random()) % 1e8
-    str += num5
-
-    while (str.length > 10) {
-        const num7 = parseInt(str.substring(0, 10))
-        const num8 = parseInt(str.substring(10))
-        str = (num7 + num8).toString()
-    }
-    str = ((num2 * parseInt(str) + num3) % num4).toString()
-
-    let str3 = ''
-    let str4 = ''
-
-    for (let i = 0; i < value.length; i++) {
-        str3 = (value.charCodeAt(i) ^ Math.floor(parseInt(str) / num4 * 255)).toString()
-        const num6 = parseInt(str3)
-        const str5 = num6.toString(16)
-        str4 += num6 < 16 ? '0' + str5 : str5
-        str = ((num2 * parseInt(str) + num3) % num4).toString()
-    }
-    let str2 = num5.toString(16)
-    while (str2.length < 8) str2 = '0' + str2
-    return str4 += str2
+/** 获取 MD5 16 进制加密结果 */
+export const getMD5Hex = (text: string) => {
+    const hash = createHash('md5')
+    hash.update(text)
+    return hash.digest('hex')
 }
 
-/** 获取数组随机一项 */
-export const getRandItem = (array: any[]) => array[Math.floor(Math.random() * array.length)]
+/** 中间件，从 Cookie 中载入 `Dfid`，如果不存在则自动创建 `Dfid` 并设置 Cookie */
+export const loadDfid: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        (req as any).dfid = req.cookies.dfid || await getDfid()
+        res.cookie('dfid', (req as any).dfid, {
+            maxAge: 365 * 24 * 60 * 60 * 1000
+        })
+        next()
+    } catch (error) {
+        if (error instanceof Error) sendRes(res, false, error.message)
+    }
+}
