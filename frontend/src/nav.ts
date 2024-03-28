@@ -28,7 +28,7 @@ export const Header = () => {
     }
 
     return div({ class: 'navbar navbar-expand-md bg-primary-subtle border-bottom border-2 border-primary-subtle sticky-top' },
-        div({ class: 'container-fluid' },
+        div({ class: 'container' },
             div({ class: 'navbar-brand user-select-none', role: 'button', onclick: () => routeTo('home') }, '爱优音乐'),
             div({ class: 'collapse navbar-collapse' },
                 div({ class: 'navbar-nav me-auto' },
