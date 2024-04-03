@@ -7,11 +7,11 @@ const { button, div, input } = van.tags
 export const Header = () => {
     /** 随机热词推荐 */
     const randHotKey = van.state('')
-    getHotKeys().then(hotKeys => {
-        randHotKey.val = getRandItem(hotKeys)
+    getHotWords().then(hotWords => {
+        randHotKey.val = getRandItem(hotWords)
         setInterval(async () => {
             let word: string
-            while ((word = getRandItem(hotKeys)) == randHotKey.val) continue
+            while ((word = getRandItem(hotWords)) == randHotKey.val) continue
             randHotKey.val = word
         }, 2000)
     })
@@ -37,6 +37,7 @@ export const Header = () => {
                     NavItem('artist', '歌手'),
                     NavItem('playlist', '歌单'),
                     NavItem('mv', 'MV'),
+                    NavItem('book', '听书'),
                 ),
                 div({ class: 'd-flex' },
                     input({ class: 'form-control me-2', type: 'search', placeholder: randHotKey }),
@@ -51,7 +52,7 @@ export const Footer = () => div({ class: 'fixed-bottom d-md-none' },
     div({ class: 'border-top', style: 'height: 50px' })
 )
 
-const getHotKeys = async (): Promise<string[]> => {
-    const res = await fetch('/api/search/searchTip')
+const getHotWords = async (): Promise<string[]> => {
+    const res = await fetch('/api/search/hotWords')
     return (await res.json()).data
 }

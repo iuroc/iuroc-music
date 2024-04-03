@@ -46,53 +46,49 @@ const getAudioInfo = async (id: string, dfid: string, isBook: boolean): Promise<
     if (data.status == 0) throw new Error('获取音频信息失败，请检查参数是否错误')
     const {
         album_name,
-        album_id,
         encode_album_id,
+        encode_album_audio_id,
         img,
         author_name,
-        author_id,
+        e_author_id,
         song_name,
         play_url,
-        audio_id,
-        encode_album_audio_id
+        lyrics
     } = data.data
 
     return {
-        album_name,
-        album_id,
-        encode_album_id,
+        albumName: album_name,
+        albumId: encode_album_id,
         img,
-        author_name,
-        author_id,
-        song_name,
-        play_url,
-        audio_id,
-        encode_album_audio_id
+        authorName: author_name,
+        authorId: e_author_id,
+        audioName: song_name,
+        playUrl: play_url,
+        audioId: encode_album_audio_id,
+        lyrics: lyrics.replace(/酷狗/g, '爱有')
     }
 }
 
 /** 音频信息 */
 type AudioInfo = {
     /** 专辑名称 */
-    album_name: string
-    /** 专辑 ID */
-    album_id: string
+    albumName: string
     /** 编码后的专辑 ID */
-    encode_album_id: string
+    albumId: string
     /** 专辑封面 URL */
     img: string
     /** 作者名称 */
-    author_name: string
+    authorName: string
     /** 作者 ID */
-    author_id: string
+    authorId: string
     /** 音频名称 */
-    song_name: string
+    audioName: string
     /** 播放地址 */
-    play_url: string
-    /** 音频 ID */
-    audio_id: string
+    playUrl: string
     /** 编码后的音频 ID */
-    encode_album_audio_id: string
+    audioId: string
+    /** 歌词内容 */
+    lyrics: string
 }
 
 export default router

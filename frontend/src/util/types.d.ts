@@ -32,9 +32,21 @@ declare module 'APlayer' {
             show(): void
             hide(): void
             toggle(): void
+            audios: PlayInfo[]
+            index: number
         }
         play(): void
         pause(): void
+        on(type: 'abort' | 'canplay' | 'canplaythrough' | 'durationchange' | 'emptied' | 'ended' |
+            'error' | 'loadeddata' | 'loadedmetadata' | 'loadstart' | 'mozaudioavailable' | 'pause' |
+            'play' | 'playing' | 'progress' | 'ratechange' | 'seeked' | 'seeking' | 'stalled' |
+            'suspend' | 'timeupdate' | 'volumechange' | 'waiting' | 'listshow' | 'listhide' |
+            'listadd' | 'listremove' | 'listswitch' | 'listclear' | 'noticeshow' | 'noticehide' |
+            'destroy' | 'lrcshow' | 'lrchide', handle: (event: Event) => void): void
+        seek(time: number): void
+        skipForward(): void
+        skipBack(): void
+        notice(message: string, time: number, opacity: number): void
     }
     export default APlayer
 }

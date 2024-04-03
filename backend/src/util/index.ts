@@ -18,12 +18,8 @@ export const getDfid = async () => {
     const query = {
         appid: '1014',
         platid: '4',
-        clientver: '0',
-        clienttime: Date.now().toString(),
         signature: '',
         mid: getMD5Hex(Date.now().toString()),
-        userid: '0',
-        uuid: getMD5Hex(Date.now().toString()),
     }
     query.signature = getMD5Hex(`1014${Object.values(query).sort().join('')}1014`)
     const res = await fetch('https://userservice.kugou.com/risk/v1/r_register_dev?' + new URLSearchParams(query).toString(), {
@@ -43,7 +39,10 @@ export const getMD5Hex = (text: string) => {
     return hash.digest('hex')
 }
 
-/** 中间件，从 Cookie 中载入 `Dfid`，如果不存在则自动创建 `Dfid` 并设置 Cookie */
+/** 中间件，从 Cookie 中载入 `Dfid`，如果不存在则自动创建 `Dfid` 并设置 Cookie。
+ * 
+ * 可通过 `(req as any).dfid` 获取 `Dfid`
+ */
 export const loadDfid: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
         (req as any).dfid = req.cookies.dfid || await getDfid()
